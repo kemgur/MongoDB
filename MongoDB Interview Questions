@@ -1,0 +1,111 @@
+
+MongoDB Interview Questions (some examples)
+
+Some of the popular MongoDB interview questions asked in Full Stack Developer job interviews are:
+
+
+
+What is MongoDB?
+
+MongoDB is a document-based database which is highly scalable and offers better performance.
+
+
+
+2. Define a replica set
+
+The group of instances which host similar data set is known as a replica set. Two nodes are present in a replica set, one is secondary and the other is primary, where data is replicated from primary and sent to the secondary node.
+
+
+
+3. What is the role of profiler in MongoDB?
+
+The role of a MongoDB profiler is to show the performance and analyse the characteristics of every operation of the database. By using the profiler, you will find all the queries which are slower than usual.
+
+
+
+4. What are NoSQL databases? What are the different types of NoSQL databases?
+
+A NoSQL database provides a mechanism for storage and retrieval of data that is modeled in means other than the tabular relations used in relational databases (like SQL, Oracle, etc.).
+
+
+
+5. What are the different types of NoSQL databases? Give some examples.
+
+The NoSQL database is classified into four basic types:
+
+Column store
+
+Document store
+
+Key-value store
+
+Graph base
+
+The following are the few examples of NoSQL database:
+
+MongoDB
+
+Cassandra
+
+CouchDB
+
+HBASE
+
+
+
+6. What kind of NoSQL database MongoDB is?
+
+MongoDB is a document oriented database. It stores data in the form of BSON structure based documents. These documents are stored in a collection.
+
+
+
+7. What are the key features of MongoDB?
+
+The following are the core features of MongoDB:
+
+High performance
+
+Automatic scaling
+
+Rich query language
+
+High availability
+
+
+
+8. What is the advantage of MongoDB?
+
+The following are a few advantages of MongoDB database:
+
+Schema less
+
+Easy to scale-out
+
+No complex joins
+
+Structure of a single object is clear
+
+
+
+9. How is MongoDB better than other SQL databases?
+
+MongoDB allows a highly flexible and scalable document structure. For e.g. one data document in MongoDB can have five columns and the other one in the same collection can have ten columns. Also, MongoDB database are faster as compared to SQL databases due to efficient indexing and storage techniques.
+
+
+
+10. Which programming languages can be used with MongoDB?
+
+MongoDB works with all the programming languages such as C, C++, C#, Java, Node.js, Perl, PHP, Python, Ruby, Scala, Go, Erlang.
+
+
+
+11. What is the difference between MongoDB and CouchDB?
+
+Although both databases are document oriented, MongoDB is a better choice for applications that need dynamic queries and good performance on a very big database. On the other side, CouchDB is better used for applications with occasionally changing queries and pre-defined queries.
+
+
+
+12. What is an embedded document?
+
+Embedded documents specify the relationship between data that is written inside the body. The documents are received while the related data body is small.
+

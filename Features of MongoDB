@@ -1,0 +1,34 @@
+
+Some of the key features of MongoDB are:
+
+Each database contains collections which in turn contains documents. Each document can be different with a varying number of fields. The size and content of each document can be different from each other.
+
+The document structure is more in line with how developers construct their classes and objects in their respective programming languages. Developers will often say that their classes are not rows and columns but have a clear structure with key-value pairs.
+
+As seen in the introduction with NoSQL databases, the rows (or documents as called in MongoDB) doesn't need to have a schema defined beforehand. Instead, the fields can be created on the fly.
+
+The data model available within MongoDB allows you to represent hierarchical relationships, to store arrays, and other more complex structures more easily.
+
+Scalability - The MongoDB environments are very scalable. Companies across the world have defined clusters with some of them running 100+ nodes with around millions of documents within the database
+
+Queries: It supports ad-hoc queries and document-based queries.
+
+Index Support: Any field in the document can be indexed.
+
+Replication: It supports Master–Slave replication. MongoDB uses native application to maintain multiple copies of data. Preventing database downtime is one of the replica set’s features as it has self-healing shard.
+
+Multiple Servers: The database can run over multiple servers. Data is duplicated to foolproof the system in the case of hardware failure.
+
+Auto-sharding: This process distributes data across multiple physical partitions called shards. Due to sharding, MongoDB has an automatic load balancing feature.
+
+MapReduce: It supports MapReduce and flexible aggregation tools.
+
+Failure Handling: In MongoDB, it’s easy to cope with cases of failures. Huge numbers of replicas give out increased protection and data availability against database downtime like rack failures, multiple machine failures, and data center failures, or even network partitions.
+
+GridFS: Without complicating your stack, any sizes of files can be stored. GridFS feature divides files into smaller parts and stores them as separate documents.
+
+Schema-less Database: It is a schema-less database written in C++.
+
+Document-oriented Storage: It uses BSON format which is a JSON-like format.
+
+Procedures: MongoDB JavaScript works well as the database uses the language instead of procedures.
