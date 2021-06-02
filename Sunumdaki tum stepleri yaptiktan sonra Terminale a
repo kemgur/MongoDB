@@ -1,0 +1,8 @@
+Sunumdaki tum stepleri yaptiktan sonra Terminale asagidaki stepleri yazdim.
+
+1) VS code da "localhost:27017" ye sag tiklayip  "Launch MongoDB Shell" tikladim.
+2) Terminale asagidaki stepleri yazdim.
+3) mongosh    =>Click Enter
+4) use inventory  =>Click Enter
+5) db  =>Click Enter
+6) Terminalde "inventory" yaziyorsa MongoDB e baglanmis demektir.
