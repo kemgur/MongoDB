@@ -37,7 +37,7 @@ db.electronics.insertMany([{"name":"ipod", "price":111}, {"name":"iphone 11"}, {
   db.clothes.find().pretty().skip(2).limit(1);
 ​
 13)How to read documents whose names are Shirt
-db.clothes.find({$and:[{"name":"Shirt"}]});
+db.clothes.find({"name":"Shirt"});
 ​
 14)How to read documents whose name is "Shirt" AND priceis "34"
   db.clothes.find({$and:[{"name":"Shirt"}, {"price":34}]}).pretty();
@@ -47,24 +47,111 @@ db.clothes.find({$and:[{"name":"Shirt"}]});
 ​
 16)How to read just prices of the Shirts
   db.clothes.find({"name":"Shirt"},{"price":1,"_id":0}).pretty();
-
+​
+17)How to read just prices and names of the clothes, sort them by prices in ascending
+  db.clothes.find({}, {"name":1, "price":1, "_id":0}).sort({"price":1}).pretty();
+​
+18)How to read just prices and names of the clothes, sort them by prices in descending
+  db.clothes.find({}, {"name":1, "price":1, "_id":0}).sort({"price":-1}).pretty();
+​
+19)How to to read first one
+  a)db.clothes.find().limit(1).pretty();
+  b)db.clothes.findOne();
+​
+20)How to read Shirts in ascending order by mark
+  db.clothes.find({"name":"Shirt"}, {"_id":0}).sort({"mark":-1}).pretty();
+​
 Note: Comparison Operators
       Equality ==> $eq
       Less than ==> $lt
       Greater than ==> $gt
       Less than or equal to ==> $lte
-      Greater than or equal to ==> $gte
-      Not equal ==> $ne
-      In an Array ==> $in
+      Greater than or equal to ==> $gte 
+      Not equal ==> $ne 
+      In an Array ==> $in 
       Not in an Array ==> $nin
-
+​
+21)Fetch documents whose prices are equal to 23
+  a)db.clothes.find({"price":23}).pretty(); OR 
+    db.clothes.find({price:23}).pretty();
+​
+  b)db.clothes.find({price:{$eq:23}}).pretty(); OR 
+    db.clothes.find({"price":{$eq:23}}).pretty();
+​
+22)Fetch documents whose prices are less than or equal to 34
+   db.clothes.find({"price":{$lte:34}}).pretty();
+​
+23)Fetch documents whose prices are greater than or equal to 43
+   db.clothes.find({"price":{$gte:43}}).pretty();
+​
+24)Fetch documents whose prices are one of the 23, 45, 34
+   db.clothes.find({"price":{$in:[23,45,34]}}).pretty();
+​
+25)Fetch documents whose prices are not one of the 23, 45, 34
+  db.clothes.find({"price":{$nin:[23,45,34]}}).pretty();
+​
 Note-1: findOneAndReplace() [Similar with PUT Method in API]
       1)It updates the sending values, it removes the missing values
       2)findOneAndReplace() updates just a single document which is the first
-      3)When you execute findOneAndReplace() on VSCode, it will print the un-updated document on the console
+      3)When you execute findOneAndReplace() on VSCode, it will print the un-updated document on the console 
+​
+26)Find the documents whose prices are less than 30 then replace "BoxerXXX" for name and 99 for price.
+    db.clothes.findOneAndReplace({"price":{$lt:35}}, {"name":"BoxerXXX", "price":99});
+​
+27)Find the documents whose prices are greater than 33 and change the name of 
+   the document whose price is the lowest to "Cheapest" 
+   db.clothes.findOneAndReplace({"price":{$gt:33}}, {"name":"Cheapest"},{sort:{"price":1}});
+​
+28)Find the documents whose prices are greater than 33 and change the name of 
+the document whose price is the highest to "The most expensive"  
+​
 Note-2: findOneAndUpdate()  [Similar with PATCH Method in API]
       1)It updates the sending values, it does not touch the missing values
       2)findOneAndUpdate() updates just a single document which is the first
-      3)When you execute findOneAndUpdate() on VSCode, it will print the un-updated document on the console
-
-
+      3)When you execute findOneAndUpdate() on VSCode, it will print the un-updated document on the console 
+      4)When you use findOneAndUpdate(), do not forget to use "$set" atomic opeartor 
+​
+29)Find the documents whose prices are less than 35 then replace "Updated" 
+for name and 777 for price.
+  db.clothes.findOneAndUpdate({"price":{$lt:35}}, {$set:{"name":"Updated"}});
+​
+30)Find the documents whose prices are greater than 35 and change the name of 
+   the document whose price is the lowest to "Cheapest"
+   db.clothes.findOneAndUpdate({"price":{$gt:35}}, {$set:{"name":"Cheapest"}}, {sort:{"price":1}});
+​
+31)Find the documents whose prices are less than 50 and change the name of 
+the document whose price is the highest to "The most expensive"
+db.clothes.findOneAndUpdate({"price":{$lt:50}},{$set:{"name":"The most expensive"}},{sort:{"price":-1}});
+​
+32)Find the document whose price equals to 23 and update the mark to "Levis", and price to 111. 
+See the updated document on the console
+db.clothes.findOneAndUpdate({"price":{$eq:23}}, {$set:{"mark":"Levis", "price":111}}, {returnNewDocument:true});
+​
+Note: As you see in the previous example, to see updated document on the console you can type 
+      {returnNewDocument:true} inside the findOneAndUpdate() or findOneAndReplace()
+​
+33)Find the document whose price equals to 888 and update the mark to "Levis", and price to 111. 
+See the updated document on the console, and if the document does not exist create it.
+db.clothes.findOneAndUpdate({"price":{$eq:888}}, {$set:{"mark":"Levis", "price":111}}, {returnNewDocument:true, upsert:true});
+​
+Note: As you see in the previous example, to create document if it does not exist 
+when you try to update type "upsert:true" inside the findOneAndUpdate() 
+or findOneAndReplace() 
+​
+34)Update the names of all documents whose prices are less than 50 to "Wooow"
+db.clothes.update({"price":{$lt:50}},{$set:{"name":"Wooow"}}, {multi:true});
+​
+Note: If you do not type {multi:true}, update() will update the first one. 
+If you want to update multiple documents type {multi:true}
+​
+34)Update the names of all documents whose prices are greater than 200 to "High Five"
+db.clothes.update({"price":{$gt:200}}, {$set:{"name":"High Five"}}, {multi:true, upsert:true});
+​
+35)How to use updateMany()
+db.clothes.updateMany({"price":{$lt:50}},{$set:{"name":"XXXXX"}});
+​
+36)How to use updateOne()
+db.clothes.updateOne({"price":{$lt:50}}, {$set:{"name":"YYYYYY"}});
+​
+37)How to use "upsert:true" in updateOne()
+db.clothes.updateOne({"price":{$lt:10}}, {$set:{"name":"YYYYYY"}}, {upsert:true});
