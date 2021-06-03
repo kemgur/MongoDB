@@ -238,15 +238,70 @@ var pipeline = [{$match:{"assignment":{$lt:4}}}, {$group:{"_id":"$assignment", a
 db.grades.aggregate(pipeline);
 
 
+49)Find the sum of points of the documents whose names are starting with "A"
+var pipeline = [{$match:{"name":{$regex:"^A"}}}, {$group:{"_id":null, total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
 
+50)Find the sum of all points of the documents whose names are ending with "s"
+var pipeline = [{$match:{"name":{$regex:"s$"}}}, {$group:{"_id":null, total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
 
+Note: How to count documents
+51)Find the number of documents whose points are less than 19
+1.Way: find() + count()
+db.grades.find({"points":{$lt:19}}).count();
 
+2.Way: count() with the filter
+db.grades.count({"points":{$lt:19}});
 
+3.Way: aggregate() with $count
+var pipeline = [{$match:{"points":{$lt:19}}}, {$count:"Low points"}];
+db.grades.aggregate(pipeline);
 
+Note: How to add new fields into report
 
+db.accounting.insertMany(
+[{"name" : "dave", "expense":[-80, -40, -50, -120], "earn":[100, 150]},
+{"name" : "dave", "expense" : [-60, -30, -20], "earn" : [200, 50, 130] },
+{"name" : "ahn", "expense" : [-80, -40, -50], "earn" : [300, 450] },
+{"name" : "li", "expense" : [-80, -120], "earn" : [500, 50, 70, 10] },
+{"name" : "annT", "expense" : [-140, -50, -120], "earn" : [400] },
+{"name" : "li", "expense" : [-120], "earn" : [22, 375, 65] },
+{"name" : "ty", "expense" : [-180, -40, -70, -12], "earn" : [500, 650, 400]}]);
 
+52)Display the total expense, total earn, and net balance of every person in the existing documents.
+var pipeline = [{$addFields:{totalExpense:{$sum:"$expense"}, totalEarn:{$sum:"$earn"}}},
+{$addFields:{netBalance:{$add:["$totalExpense", "$totalEarn"]}}},
+{$sort:{"netBalance":-1}},
+{$project:{"_id":0, "expense":0, "earn":0}}];
+db.accounting.aggregate(pipeline).pretty();
 
+Note: How to create a copy of a collection in DB
+53)Create a copy of accounting collection in database with a new name (accountingCopy) 
+var pipeline = [{$merge:{into:"accountingCopy"}}];
+db.accounting.aggregate(pipeline).pretty();
 
+53)Create a copy of accounting collection with different indexes in database with a new name (accountingCopyIndexed) 
+var pipeline = [{$project:{_id:0}, {$merge:{into:"accountingCopyIndexed"}}}];
+db.accounting.aggregate(pipeline).pretty();
 
+Note: How to do multiple commands in a single method
+54) a)Insert {"author" : "mark", "score" : 55, "views" : 555 }; 
+    b)Update dave's score to 55
+    c)Replace {"author":"chris tien", "score":55} for {"author":"chris", "score":90, "views":100 }
+    d)Delete the document whose author is "mary" 
 
+db.stories.bulkWrite([
+                        {insertOne:{"document":{"author" : "mark", "score" : 55, "views" : 555 }}},
+                        {updateOne:{"filter":{author:"dave"}, "update":{$set:{score:55}}}},
+                        {replaceOne:{"filter":{author:"chris"}, "replacement":{"author" : "chris tien", "score" : 55}}},
+                        {deleteOne:{"filter":{author:"mary"}}}
+                    ]);
 
+Note: In bulkWrite(), you can use:
+                                    insertOne
+                                    updateOne
+                                    updateMany
+                                    deleteOne
+                                    deleteMany
+                                    replaceOne
