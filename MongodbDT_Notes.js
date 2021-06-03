@@ -57,6 +57,81 @@ db.products.find({"p_brand":"dell"},{"p_price":1,"_id":0});
 18)To use AND OR operator $and ,  $or
 => db.products.find({$and:[{"p_price":1200},{"p_brand":"dell"}]});
 => db.products.find({$or:[{"p_price":1200},{"p_brand":"dell"}]});
+=> db.products.find({$or:[{"p_price":1200},{"p_price":4000}]});
+=> db.products.find({$and:[{"p_price":1200},{"p_brand":"dell"}]});
+=> db.products.find({$and:[{"p_price":4000},{"p_brand":"ibm"}]});
+=> db.products.find({$or:[{"p_price":7000},{"p_brand":"apple"}]});
+ db.clothes.find({"price":{$lte:7000}}).pretty();
+
+17) drop database
+db.dropDatabase();
+
+18) Compararison Operators
+Note: Comparison Operators
+      Equality ==> $eq
+      Less than ==> $lt
+      Greater than ==> $gt
+      Less than or equal to ==> $lte
+      Greater than or equal to ==> $gte 
+      Not equal ==> $ne 
+      In an Array ==> $in 
+      Not in an Array ==> $nin
+
+db.products.find({"p_price":{$gt:2000}},{"p_brand":1,"_id":0});
+db.products.find({"price":{$in:[1200,500,4500]}}).pretty();
+
+​
+19) Fetch documents whose prices are one of the 1200,500,4500
+    db.products.find({"p_price":{$in:[1200,500,4500]}},{"p_brand":1,"_id":0});
+
+20) replace() method ==>> findOneAndReplace()
+	It is finding our criteria then it is replacing and it remove to others feld	
+    db.products.findOneAndReplace({"p_price":1000},{"b_brand":"asus"})
+    db.products.findOneAndReplace({"p_price":{$lt:1000}},{"b_brand":"caspernirvana","p_name":"pc"});
+
+21) replace whose p_brand is ibm  replace it with lenova p_name replace with pc p_price 5000
+    db.products.findOneAndReplace({"p_brand":{$eq:"ibm"}},{"b_brand":"lenova","p_price":5000});
+    db.products.findOneAndReplace({"p_brand":"ibm"},{"p_brand":"lenova","p_price":5000,"p_name":"pc"})
+
+22) update() method ==>> findOneAndUpdate()    
+     db.products.findOneAndUpdate({"p_brand":"lenova"},{$set:({"p_brand":"ibm"})});
+
+23) update the document whose price is greater than 5000 update the brand to apple price 10000
+    db.products.findOneAndUpdate({"p_price":{$gt:5000}},{$set:{"b_brand":"apple","p_price":10000}});
+
+24) updateOne
+    db.products.updateOne({"p_price":{$gt:5000}},{$set:{"b_brand":"apple","p_price":10000}});
+	db.products.update({"p_price":{$lt:5000}},{$set:{"p_brand":"hp","p_price":50000}});	
+	
+	db.products.update({"p_price":{$lt:5000}},{$set:{"p_brand":"hp","p_price":50000}});
+    DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+    {
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+  }
+
+  24) update ==>> single and multible update for multible {multi:true}
+             ==>> updateMany() for update many documents
+             db.products.updateMany( { "p_name":"pc" } , { $set :{"p_name":"laptop" } },{returnNewDocument:true}  ); 
+      db.products.update({"p_price":{$lt:5000}}, {$set:{"p_price":6000, "p_brand":"apple"}},{multi:true});
+      db.products.update({"p_price":{$lt:10000}}, {$set:{"p_price":10000, "p_brand":"apple"}},{multi:true, returnNewDocument:true});
+      db.products.findOneAndReplace({"p_price":10000},{"p_brand":"toshiba"},{returnNewDocument:true});
+  25) 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
