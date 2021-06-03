@@ -1,0 +1,15 @@
+Index Oluşturma
+
+ensureIndex komutu ile index şu şekilde oluşturulur:
+db.kullanicilar.ensureIndex({"no" : 1});
+
+Link: http://www.ilterismutlu.com/mongodb-index-olusturma-index-kullanmanin-avantajlari-dezavantajlari/
+
+“numIndexesBefore” değeri, collection’da daha önceden oluşturulmuş index adedini göstermektedir. Komut çalıştırılmadan önce bulunan index, otomatik oluşturulmuş “_id” anahtarının index’idir.
+
+“numIndexesAfter” değeri, komut çalıştırıldıktan sonra bulunan index adedini vermektedir.
+
+“ok”: değeri, işlemin başarılı olup olmadığını gösterir. “1” ise başarılı, “0” ile başarısızdır.
+
+Index oluşturulduktan sonra, tekrar no_100 kaydını explain plan’nını incelersek, index’in performans üzerindeki farkını görebiliriz.
+

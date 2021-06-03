@@ -1,3 +1,10 @@
+
+=>> show dbs  =>tum coolection'lari gösterir.
+=>> use admin => admin => admin db ine geçiş yapar.
+=>> “ok”: değeri, “1” ise başarılı, “0” ile başarısızdır.
+
+
+
 1) How to create DB
     use product; ==> switched to db product
 ​
@@ -19,6 +26,7 @@ db.electronics.insertMany([{"name":"ipod", "price":111}, {"name":"iphone 11"}, {
 ​
 7)How to create our own index
   db.electronics.ensureIndex({"name":1});
+                Sorgu analizi sonrası sorgularda bir yavaşlama var ise en çok kullanılan                alana index eklenebilir.Koleksiyondaki alana index özelliği eklemek için ensureIndex metodu kullanılır. =>db.kisiler.ensureIndex({ adi: 1 });
 ​
 8)How to drop database
   db.dropDatabase();
@@ -26,6 +34,10 @@ db.electronics.insertMany([{"name":"ipod", "price":111}, {"name":"iphone 11"}, {
 9)How to drop collection
   db.electronics.drop();
 ​
+9.5)  db.createCollection("products");  =>>{ ok: 1 }
+      db.clothes.insertMany([{"name":"shirt","price":23,"mark":"Polo"},{"name":"Shirt","price":23,"mark":"Polo"}]);
+
+
 10)How to read all documents from a collection
   db.clothes.find();
   db.clothes.find().pretty(); ==> Makes the output more readable
@@ -47,6 +59,7 @@ db.clothes.find({"name":"Shirt"});
 ​
 16)How to read just prices of the Shirts
   db.clothes.find({"name":"Shirt"},{"price":1,"_id":0}).pretty();
+  => {"price":1, "_id":0} yazdigimizda tum tişört fiyatlarını cikarir.
 ​
 17)How to read just prices and names of the clothes, sort them by prices in ascending
   db.clothes.find({}, {"name":1, "price":1, "_id":0}).sort({"price":1}).pretty();
@@ -60,6 +73,7 @@ db.clothes.find({"name":"Shirt"});
 ​
 20)How to read Shirts in ascending order by mark
   db.clothes.find({"name":"Shirt"}, {"_id":0}).sort({"mark":-1}).pretty();
+	({"mark":-1} =>> Z'den A'ya doğrular sıralar.)
 ​
 Note: Comparison Operators
       Equality ==> $eq
@@ -155,3 +169,84 @@ db.clothes.updateOne({"price":{$lt:50}}, {$set:{"name":"YYYYYY"}});
 ​
 37)How to use "upsert:true" in updateOne()
 db.clothes.updateOne({"price":{$lt:10}}, {$set:{"name":"YYYYYY"}}, {upsert:true});
+
+Note:How to delete a document ==> deleteOne(), deleteMany(), remove()
+​Note: If you ask to delete non-existing document, delete methods do not give 
+
+38)Delete the document whose name is "The most expensive"
+  db.clothes.deleteOne({"name":"The most expensive"});
+​
+39)Delete the document whose name is "XXXXX" 
+(We have multiple "XXXXX" but first will removed)
+db.clothes.deleteOne({"name":"XXXXX"});
+​
+39)Delete the document whose name is "YYYYY"
+  db.clothes.deleteMany({"name":"YYYYYY"});
+
+40) Delete the document whose marks are "Lewis"
+    db.clothes.remove({"mark":"Lewis"});
+
+41)Delete all documents
+db.clothes.deleteMany({}); OR db.clothes.remove({});
+
+Note: To insert document OR documents we have 3 methods insertOne(), insertMany(), insert() 
+==>>insert()  ikisininde yerine kullanılır.
+
+42) Insert a single document like name :TV, price: 123, mark:Samsung
+    db.electronics.insertOne({"name":"TV", "price":123, "mark":"Samsung" }); 
+
+43)Insert 3 documents like 
+name:TV, price:123, mark:Samsung
+name:Radio, price:32, mark:Panasonic
+name:ipod, price:150, mark:Apple
+==>>1.Way
+db.electronics.insertMany([{"name":"TV", "price":123, "mark":"Samsung"}, 
+{"name":"Radio", "price":32, "mark":"Panasonic"}, 
+{"name":"ipod", "price":150, "mark":"Apple"}]);
+==>>2.Way: 
+db.electronics.insert([{"name":"TV", "price":123, "mark":"Samsung"}, 
+{"name":"Radio", "price":32, "mark":"Panasonic"}, 
+{"name":"ipod", "price":150, "mark":"Apple"}]);
+
+43.5) Delete all records from electronic collection
+    db.electronics.drop();
+    db.electronics.remove({});
+
+44) db.grades.insertMany([
+    { _id: 6305, name : "A. MacDyver", "assignment" : 5, "points" : 24 },
+    { _id: 6308, name : "B. Batlock", "assignment" : 3, "points" : 22 },
+    { _id: 6312, name : "M. Tagnum", "assignment" : 5, "points" : 30 },
+    { _id: 6319, name : "R. Stiles", "assignment" : 2, "points" : 12 },
+    { _id: 6322, name : "A. MacDyver", "assignment" : 2, "points" : 14 },
+    { _id: 6234, name : "R. Stiles", "assignment" : 1, "points" : 10 }
+    ]);
+
+45)Find the total points for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
+​
+46)Find the average points for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", average:{$avg:"$points"}}}];
+db.grades.aggregate(pipeline);
+​
+47)Find the minimum point for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", average:{$min:"$points"}}}];
+db.grades.aggregate(pipeline);
+​
+48)Find the average points of the records if the assignment is less than 4
+var pipeline = [{$match:{"assignment":{$lt:4}}}, {$group:{"_id":"$assignment", average:{$avg:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
