@@ -110,7 +110,7 @@ Note-1: findOneAndReplace() [Similar with PUT Method in API]
       3)When you execute findOneAndReplace() on VSCode, it will print the un-updated document on the console 
 ​
 26)Find the documents whose prices are less than 30 then replace "BoxerXXX" for name and 99 for price.
-    db.clothes.findOneAndReplace({"price":{$lt:35}}, {"name":"BoxerXXX", "price":99});
+    db.products.findOneAndReplace({"price":{$lt:35}}, {"name":"BoxerXXX", "price":99});
 ​
 27)Find the documents whose prices are greater than 33 and change the name of 
    the document whose price is the lowest to "Cheapest" 
@@ -118,12 +118,13 @@ Note-1: findOneAndReplace() [Similar with PUT Method in API]
 ​
 28)Find the documents whose prices are greater than 33 and change the name of 
 the document whose price is the highest to "The most expensive"  
+   db.clothes.findOneAndReplace({"price":{$gt:50}}, {"name":"The most expensive"},{sort:{"price":-1}});
 ​
 Note-2: findOneAndUpdate()  [Similar with PATCH Method in API]
       1)It updates the sending values, it does not touch the missing values
       2)findOneAndUpdate() updates just a single document which is the first
       3)When you execute findOneAndUpdate() on VSCode, it will print the un-updated document on the console 
-      4)When you use findOneAndUpdate(), do not forget to use "$set" atomic opeartor 
+      4)When you use findOneAndUpdate(), do not forget to use "$set" atomic operator 
 ​
 29)Find the documents whose prices are less than 35 then replace "Updated" 
 for name and 777 for price.
