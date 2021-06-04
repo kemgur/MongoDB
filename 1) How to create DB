@@ -2,6 +2,8 @@
 =>> show dbs  =>tum coolection'lari gösterir.
 =>> use admin => admin => admin db ine geçiş yapar.
 =>> “ok”: değeri, “1” ise başarılı, “0” ile başarısızdır.
+=>> _ un anlamı index demektir. Yani primary key'dir.primary key, tekrar etmek(are not repeit)
+
 
 
 
@@ -125,6 +127,7 @@ Note-2: findOneAndUpdate()  [Similar with PATCH Method in API]
       2)findOneAndUpdate() updates just a single document which is the first
       3)When you execute findOneAndUpdate() on VSCode, it will print the un-updated document on the console 
       4)When you use findOneAndUpdate(), do not forget to use "$set" atomic operator 
+      5) {returnNewDocument:true} ==>> eklediğimizde yeni sonucu verir.
 ​
 29)Find the documents whose prices are less than 35 then replace "Updated" 
 for name and 777 for price.
@@ -159,9 +162,20 @@ db.clothes.update({"price":{$lt:50}},{$set:{"name":"Wooow"}}, {multi:true});
 Note: If you do not type {multi:true}, update() will update the first one. 
 If you want to update multiple documents type {multi:true}
 ​
+Note: {multi:true} kullandigimizda tum veriler güncellenir. Aksi halde sadece birinci veri güncellenir. {upsert:true} ==>> aranan veri olmadiginda onu create eder.
+
+Note: If you do not type {multi:true}, update() will update the first one. 
+If you want to update multiple documents type {multi:true}
+​
 34)Update the names of all documents whose prices are greater than 200 to "High Five"
 db.clothes.update({"price":{$gt:200}}, {$set:{"name":"High Five"}}, {multi:true, upsert:true});
-​
+​     {
+  acknowledged: true,
+  insertedId: ObjectId("60b9569f111e2633b75c77b7"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
 35)How to use updateMany()
 db.clothes.updateMany({"price":{$lt:50}},{$set:{"name":"XXXXX"}});
 ​
@@ -171,18 +185,21 @@ db.clothes.updateOne({"price":{$lt:50}}, {$set:{"name":"YYYYYY"}});
 37)How to use "upsert:true" in updateOne()
 db.clothes.updateOne({"price":{$lt:10}}, {$set:{"name":"YYYYYY"}}, {upsert:true});
 
-Note:How to delete a document ==> deleteOne(), deleteMany(), remove()
-​Note: If you ask to delete non-existing document, delete methods do not give 
+Note: How to delete a document ==> deleteOne(), deleteMany(), remove()
+Note: If you ask to delete non-existing document, delete methods do not give any
+      error, they tell "deletedCount" : 0"
+Note: deleteMany(), and remove() do the same, just their outputs are different
 
 38)Delete the document whose name is "The most expensive"
   db.clothes.deleteOne({"name":"The most expensive"});
 ​
 39)Delete the document whose name is "XXXXX" 
-(We have multiple "XXXXX" but first will removed)
-db.clothes.deleteOne({"name":"XXXXX"});
+   (We have multiple "XXXXX" but first will removed)
+   db.clothes.deleteOne({"name":"XXXXX"});
+    {acknowledged: true, deletedCount: 1 }
 ​
 39)Delete the document whose name is "YYYYY"
-  db.clothes.deleteMany({"name":"YYYYYY"});
+   db.clothes.deleteMany({"name":"YYYYYY"});
 
 40) Delete the document whose marks are "Lewis"
     db.clothes.remove({"mark":"Lewis"});
@@ -191,7 +208,7 @@ db.clothes.deleteOne({"name":"XXXXX"});
 db.clothes.deleteMany({}); OR db.clothes.remove({});
 
 Note: To insert document OR documents we have 3 methods insertOne(), insertMany(), insert() 
-==>>insert()  ikisininde yerine kullanılır.
+==>>insert()  ikisininde yerine kullanılır. insertMany() kullanılırken parantezden sonra [] kullanılır.
 
 42) Insert a single document like name :TV, price: 123, mark:Samsung
     db.electronics.insertOne({"name":"TV", "price":123, "mark":"Samsung" }); 
@@ -212,6 +229,13 @@ db.electronics.insert([{"name":"TV", "price":123, "mark":"Samsung"},
 43.5) Delete all records from electronic collection
     db.electronics.drop();
     db.electronics.remove({});
+
+Aggregations: MongoDB provides three ways to perform aggregation:
+              MongoDB, toplama gerçekleştirmek için üç yol sunar:
+  1) the aggregation pipeline,(toplama ardışık düzeni) 
+  2) the map-reduce function, (eşleme azaltma işlevi )
+  3) and single purpose aggregation methods. (tek amaçlı toplama yöntemleri.)
+
 
 44) db.grades.insertMany([
     { _id: 6305, name : "A. MacDyver", "assignment" : 5, "points" : 24 },
@@ -236,7 +260,7 @@ db.grades.aggregate(pipeline);
 ​
 48)Find the average points of the records if the assignment is less than 4
 var pipeline = [{$match:{"assignment":{$lt:4}}}, {$group:{"_id":"$assignment", average:{$avg:"$points"}}}];
-db.grades.aggregate(pipeline);
+ 
 
 
 49)Find the sum of points of the documents whose names are starting with "A"
@@ -270,12 +294,36 @@ db.accounting.insertMany(
 {"name" : "li", "expense" : [-120], "earn" : [22, 375, 65] },
 {"name" : "ty", "expense" : [-180, -40, -70, -12], "earn" : [500, 650, 400]}]);
 
+
+db.articles.insertMany(
+[{"author" : "dave", "score" : 80, "views" : 100 },
+{"author" : "dave", "score" : 85, "views" : 521 },
+{"author" : "ahn", "score" : 60, "views" : 1000 },
+{"author" : "li", "score" : 55, "views" : 5000 },
+{"author" : "annT", "score" : 60, "views" : 50 },
+{"author" : "li", "score" : 94, "views" : 999 },
+{"author" : "ty", "score" : 95, "views" : 1000 }]);
+
+db.accounting.insertMany(
+[{"name" : "dave", "expense":[-80, -40, -50, -120], "earn":[100, 150]},
+{"name" : "dave", "expense" : [-60, -30, -20], "earn" : [200, 50, 130] },
+{"name" : "ahn", "expense" : [-80, -40, -50], "earn" : [300, 450] },
+{"name" : "li", "expense" : [-80, -120], "earn" : [500, 50, 70, 10] },
+{"name" : "annT", "expense" : [-140, -50, -120], "earn" : [400] },
+{"name" : "li", "expense" : [-120], "earn" : [22, 375, 65] },
+{"name" : "ty", "expense" : [-180, -40, -70, -12], "earn" : [500, 650, 400]}]); 
+
+
 52)Display the total expense, total earn, and net balance of every person in the existing documents.
 var pipeline = [{$addFields:{totalExpense:{$sum:"$expense"}, totalEarn:{$sum:"$earn"}}},
 {$addFields:{netBalance:{$add:["$totalExpense", "$totalEarn"]}}},
 {$sort:{"netBalance":-1}},
 {$project:{"_id":0, "expense":0, "earn":0}}];
 db.accounting.aggregate(pipeline).pretty();
+Note: $add:[] =>> methodu ile birlikte birden çok veri toplanacaksa [] kullanılır.
+
+Note-01) If the name of the new field is the same as an existing field name (including _id), $addFields overwrites the existing value of that field with the value of the specified expression.
+(Yeni alanın adı, mevcut bir alan adıyla (including _id),  aynıysa, $addFields, belirtilen ifadenin değerini o alanın mevcut değerinin üzerine yazar.)
 
 Note: How to create a copy of a collection in DB
 53)Create a copy of accounting collection in database with a new name (accountingCopy) 
@@ -285,6 +333,8 @@ db.accounting.aggregate(pipeline).pretty();
 53)Create a copy of accounting collection with different indexes in database with a new name (accountingCopyIndexed) 
 var pipeline = [{$project:{_id:0}, {$merge:{into:"accountingCopyIndexed"}}}];
 db.accounting.aggregate(pipeline).pretty();
+{$project:{_id:0} ==>> id yi kullanmadan kopyalama yapmayı saglar.
+
 
 Note: How to do multiple commands in a single method
 54) a)Insert {"author" : "mark", "score" : 55, "views" : 555 }; 

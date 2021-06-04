@@ -1,0 +1,31 @@
+Note-9: Create an "article" collection inside the "inventory" database, then insert documents
+db.articles.insertMany(
+[{"author" : "dave", "score" : 80, "views" : 100 },
+{"author" : "dave", "score" : 85, "views" : 521 },
+{"author" : "ahn", "score" : 60, "views" : 1000 },
+{"author" : "li", "score" : 55, "views" : 5000 },
+{"author" : "annT", "score" : 60, "views" : 50 },
+{"author" : "li", "score" : 94, "views" : 999 },
+{"author" : "ty", "score" : 95, "views" : 1000 }]);
+​
+53)Find the number of documents whose score is less than 70 OR greater than 90
+//1.Way: Use find() + count()
+db.articles.find({$or:[{score:{$lt:70}}, {score:{$gt:90}}]}).count();
+​
+//2.Way: Use count() with condition
+db.articles.count({$or:[{score:{$lt:70}}, {score:{$gt:90}}]});
+​
+//3.Way: Use aggregate()
+var pipeline = [{$match:{$or:[{score:{$lt:70}}, {score:{$gt:90}}]}}, {$count:"Mins and Maxs"}];
+db.articles.aggregate(pipeline);
+​
+54)Find the total number of views of documents whose score is less than 80 AND greater than 50
+//1.Way: Use find() + count()
+db.articles.find({$and:[{score:{$lt:80}}, {score:{$gt:50}}]}).count();
+​
+//2.Way: Use count() with condition
+db.articles.count({$and:[{score:{$lt:80}}, {score:{$gt:50}}]});
+​
+//3.Way: Use aggregate()
+var pipeline = [{$match:{$and:[{score:{$lt:80}}, {score:{$gt:50}}]}}, {$count:"Middle scores"}];
+db.articles.aggregate(pipeline);
