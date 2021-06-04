@@ -119,10 +119,96 @@ db.products.find({"price":{$in:[1200,500,4500]}}).pretty();
       db.products.update({"p_price":{$lt:5000}}, {$set:{"p_price":6000, "p_brand":"apple"}},{multi:true});
       db.products.update({"p_price":{$lt:10000}}, {$set:{"p_price":10000, "p_brand":"apple"}},{multi:true, returnNewDocument:true});
       db.products.findOneAndReplace({"p_price":10000},{"p_brand":"toshiba"},{returnNewDocument:true});
-  25) 
+  
+  25) Note: How to delete a document ==> deleteOne(), deleteMany(), remove()
+Note: If you ask to delete non-existing document, delete methods do not give any
+      error, they tell "deletedCount" : 0"
+Note: deleteMany(), and remove() do the same, just their outputs are different
 
 
+26) db.grades.insertMany([
+    { _id: 6305, name : "A. MacDyver", "assignment" : 5, "points" : 24 },
+    { _id: 6308, name : "B. Batlock", "assignment" : 3, "points" : 22 },
+    { _id: 6312, name : "M. Tagnum", "assignment" : 5, "points" : 30 },
+    { _id: 6319, name : "R. Stiles", "assignment" : 2, "points" : 12 },
+    { _id: 6322, name : "A. MacDyver", "assignment" : 2, "points" : 14 },
+    { _id: 6234, name : "R. Stiles", "assignment" : 1, "points" : 10 }
+    ]);
 
+ 27) delete whose assigment is less than 3
+     db.grades.deleteMany({“p_price”:{$lt:3}});
+     {acknowledged: true, deletedCount: 0 }
+
+  28) delete whose assigment is greater than 3
+      db.grades.deleteMany({"assignment":{$gt:3}});
+  
+  29)  remove() method is working like deleteMany() method,
+       db.grades.remove({"assignment":{$gt:3}});
+
+  30)  Update the names of all documents whose prices are less than 50 to "Wooow"
+       db.clothes.update({"price":{$lt:50}},{$set:{"name":"Wooow"}}, {multi:true});
+​
+Note: If you do not type {multi:true}, update() will update the first one. 
+If you want to update multiple documents type {multi:true}
+​
+Note: {multi:true} kullandigimizda tum veriler güncellenir. Aksi halde sadece birinci veri güncellenir. {upsert:true} ==>> aranan veri olmadiginda onu create eder.
+
+Note: If you do not type {multi:true}, update() will update the first one. 
+If you want to update multiple documents type {multi:true}
+​
+  31) Update the names of all documents whose prices are greater than 200 to "High Five"
+      db.clothes.update({"price":{$gt:200}}, {$set:{"name":"High Five"}}, {multi:true, upsert:true});
+​     {
+  acknowledged: true,
+  insertedId: ObjectId("60b9569f111e2633b75c77b7"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+        }
+  32) How to use updateMany()
+      db.clothes.updateMany({"price":{$lt:50}},{$set:{"name":"XXXXX"}});
+​
+  32) How to use updateOne()
+      db.clothes.updateOne({"price":{$lt:50}}, {$set:{"name":"YYYYYY"}});
+​
+  33) How to use "upsert:true" in updateOne()
+      db.clothes.updateOne({"price":{$lt:10}}, {$set:{"name":"YYYYYY"}}, {upsert:true});   
+      db.grades.update({"assignment":20},{$set:{"name":"kemal","_id":123,"salary":100}},{upsert:true});
+  
+
+  34) aggregate
+       db.stories.insertMany(
+[{"story_author" : "dave", "score" : 60, "views" : 120 },
+{"story_author" : "dave", "score" : 75, "views" : 200 },
+{"story_author" : "chris", "score" : 90, "views" : 100 },
+{"story_author" : "ali", "score" : 35, "views" : 3000 },
+{"story_author" : "mary", "score" : 80, "views" : 350 },
+{"story_author" : "veli", "score" : 54, "views" : 333 },
+{"story_author" : "ocean", "score" : 97, "views" : 2000 }]);
+
+> var  pipeline=[{$match:{}},{$group:{"_id":"$story_author",totalViews:{$sum:"$views"}}}];   
+ db.stories.aggregate(pipeline);
+ var pipeline=[{$match:{}},{$group:{"_id":"$story_author",totalScore:{$sum:"$score"}}}];
+ db.stories.aggregate(pipeline);
+ var pipeline=[{$match:{}},{$group:{"_id":"$story_author",totalScore:{$sum:"$views"}}}];
+ db.stories.aggregate(pipeline);
+
+ var pipeline = [{$match:{"$score:{$lt:80}}}, {$group:{"_id":"auther", average:{$avg:"$score"}}}];
+db.article.aggregate(pipeline);
+
+
+35) db.articles.insertMany(
+[{"author" : "dave", "score" : 80, "views" : 100 },
+{"author" : "dave", "score" : 85, "views" : 521 },
+{"author" : "ahn", "score" : 60, "views" : 1000 },
+{"author" : "Ali", "score" : 55, "views" : 5000 },
+{"author" : "annT", "score" : 60, "views" : 50 },
+{"author" : "Ali", "score" : 94, "views" : 999 },
+{"author" : "ty", "score" : 95, "views" : 1000 }]);
+
+//FIND average for views whose score is less than 80 for each names
+var pipeline=[{$match:{score:{$lt:80}}},{$group:{"_id":"$author",averageofViews:{$avg:"$views"}}}];
+ db.articles.aggregate(pipeline);
 
 
 
