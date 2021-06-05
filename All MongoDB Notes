@@ -1,0 +1,428 @@
+1) How to create DB
+    use product; ==> switched to db product
+
+2)How to see which database are you in
+   db; ==> products
+
+3) How to add a collection into a DB
+    db.createCollection("products"); ==> { "ok" : 1 }
+
+4)How to insert a single Document into a collection 
+    db.products.insertOne({ "product_name":"Laptop", "price" : 800, "tax": 32});
+
+5)How to insert multiple Documents into a collection
+db.electronics.insertMany([{"name":"ipod", "price":111}, {"name":"iphone 11"}, {"name":"radio", "price":53, "tax":10}]);
+
+6)How to insert a single or many documents into a collection
+  db.electronics.insert({"name":"iron", "tax":12});
+  db.electronics.insert([{"price":123}, {"name":"radio", "tax":8}]);
+
+7)How to create our own index
+  db.electronics.ensureIndex({"name":1});
+
+8)How to drop database
+  db.dropDatabase();
+
+9)How to drop collection
+  db.electronics.drop();
+
+10)How to read all documents from a collection
+  db.clothes.find();
+  db.clothes.find().pretty(); ==> Makes the output more readable
+
+11)How to read limited number of Documents
+  db.clothes.find().pretty().limit(2); ==> It will display just first 2 documents
+
+12) How to read 3rd document
+  db.clothes.find().pretty().skip(2).limit(1);
+
+13)How to read documents whose names are Shirt
+db.clothes.find({"name":"Shirt"});
+
+14)How to read documents whose name is "Shirt" AND priceis "34"
+  db.clothes.find({$and:[{"name":"Shirt"}, {"price":34}]}).pretty();
+
+15)How to read documents whose names are "Shirt" OR "Trouser"
+  db.clothes.find({$or:[{"name":"Shirt"}, {"name":"Trouser"}]}).pretty();
+
+16)How to read just prices of the Shirts
+  db.clothes.find({"name":"Shirt"},{"price":1,"_id":0}).pretty();
+
+17)How to read just prices and names of the clothes, sort them by prices in ascending
+  db.clothes.find({}, {"name":1, "price":1, "_id":0}).sort({"price":1}).pretty();
+
+18)How to read just prices and names of the clothes, sort them by prices in descending
+  db.clothes.find({}, {"name":1, "price":1, "_id":0}).sort({"price":-1}).pretty();
+
+19)How to to read first one
+  a)db.clothes.find().limit(1).pretty();
+  b)db.clothes.findOne();
+
+20)How to read Shirts in ascending order by mark
+  db.clothes.find({"name":"Shirt"}, {"_id":0}).sort({"mark":-1}).pretty();
+
+Note: Comparison Operators
+      Equality ==> $eq
+      Less than ==> $lt
+      Greater than ==> $gt
+      Less than or equal to ==> $lte
+      Greater than or equal to ==> $gte 
+      Not equal ==> $ne 
+      In an Array ==> $in 
+      Not in an Array ==> $nin
+
+21)Fetch documents whose prices are equal to 23
+  a)db.clothes.find({"price":23}).pretty(); OR 
+    db.clothes.find({price:23}).pretty();
+
+  b)db.clothes.find({price:{$eq:23}}).pretty(); OR 
+    db.clothes.find({"price":{$eq:23}}).pretty();
+
+22)Fetch documents whose prices are less than or equal to 34
+   db.clothes.find({"price":{$lte:34}}).pretty();
+
+23)Fetch documents whose prices are greater than or equal to 43
+   db.clothes.find({"price":{$gte:43}}).pretty();
+
+24)Fetch documents whose prices are one of the 23, 45, 34
+   db.clothes.find({"price":{$in:[23,45,34]}}).pretty();
+
+25)Fetch documents whose prices are not one of the 23, 45, 34
+  db.clothes.find({"price":{$nin:[23,45,34]}}).pretty();
+
+Note-1: findOneAndReplace() [Similar with PUT Method in API]
+      1)It updates the sending values, it removes the missing values
+      2)findOneAndReplace() updates just a single document which is the first
+      3)When you execute findOneAndReplace() on VSCode, it will print the un-updated document on the console 
+
+26)Find the documents whose prices are less than 30 then replace "BoxerXXX" for name and 99 for price.
+    db.clothes.findOneAndReplace({"price":{$lt:35}}, {"name":"BoxerXXX", "price":99});
+
+27)Find the documents whose prices are greater than 33 and change the name of 
+   the document whose price is the lowest to "Cheapest" 
+   db.clothes.findOneAndReplace({"price":{$gt:33}}, {"name":"Cheapest"},{sort:{"price":1}});
+
+28)Find the documents whose prices are greater than 33 and change the name of 
+the document whose price is the highest to "The most expensive"  
+
+Note-2: findOneAndUpdate()  [Similar with PATCH Method in API]
+      1)It updates the sending values, it does not touch the missing values
+      2)findOneAndUpdate() updates just a single document which is the first
+      3)When you execute findOneAndUpdate() on VSCode, it will print the un-updated document on the console 
+      4)When you use findOneAndUpdate(), do not forget to use "$set" atomic opeartor 
+
+29)Find the documents whose prices are less than 35 then replace "Updated" 
+for name.
+  db.clothes.findOneAndUpdate({"price":{$lt:35}}, {$set:{"name":"Updated"}});
+
+30)Find the documents whose prices are greater than 35 and change the name of 
+   the document whose price is the lowest to "Cheapest"
+   db.clothes.findOneAndUpdate({"price":{$gt:35}}, {$set:{"name":"Cheapest"}}, {sort:{"price":1}});
+
+31)Find the documents whose prices are less than 50 and change the name of 
+the document whose price is the highest to "The most expensive"
+db.clothes.findOneAndUpdate({"price":{$lt:50}},{$set:{"name":"The most expensive"}},{sort:{"price":-1}});
+
+32)Find the document whose price equals to 23 and update the mark to "Levis", and price to 111. 
+See the updated document on the console
+db.clothes.findOneAndUpdate({"price":{$eq:23}}, {$set:{"mark":"Levis", "price":111}}, {returnNewDocument:true});
+
+Note: As you see in the previous example, to see updated document on the console you can type 
+      {returnNewDocument:true} inside the findOneAndUpdate() or findOneAndReplace()
+
+33)Find the document whose price equals to 888 and update the mark to "Levis", and price to 111. 
+See the updated document on the console, and if the document does not exist create it.
+db.clothes.findOneAndUpdate({"price":{$eq:888}}, {$set:{"mark":"Levis", "price":111}}, {returnNewDocument:true, upsert:true});
+
+Note: As you see in the previous example, to create document if it does not exist 
+when you try to update type "upsert:true" inside the findOneAndUpdate() 
+or findOneAndReplace() 
+
+34)Update the names of all documents whose prices are less than 50 to "Wooow"
+db.clothes.update({"price":{$lt:50}},{$set:{"name":"Wooow"}}, {multi:true});
+
+Note: If you do not type {multi:true}, update() will update the first one. 
+If you want to update multiple documents type {multi:true}
+
+34)Update the names of all documents whose prices are greater than 200 to "High Five"
+db.clothes.update({"price":{$gt:200}}, {$set:{"name":"High Five"}}, {multi:true, upsert:true});
+
+35)How to use updateMany()
+db.clothes.updateMany({"price":{$lt:50}},{$set:{"name":"XXXXX"}});
+
+36)How to use updateOne()
+db.clothes.updateOne({"price":{$lt:50}}, {$set:{"name":"YYYYYY"}});
+
+37)How to use "upsert:true" in updateOne()
+db.clothes.updateOne({"price":{$lt:10}}, {$set:{"name":"YYYYYY"}}, {upsert:true});
+
+Note: How to delete a document ==> deleteOne(), deleteMany(), remove()
+Note: If you ask to delete non-existing document, delete methods do not give any
+      error, they tell "deletedCount" : 0"
+Note: deleteMany(), and remove() do the same, just their outputs are different
+
+38)Delete the document whose name is "The most expensive"
+  db.clothes.deleteOne({"name":"The most expensive"});
+
+39)Delete the document whose name is "XXXXX" 
+(We have multiple "XXXXX" but first will removed)
+  db.clothes.deleteOne({"name":"XXXXX"});
+
+39)Delete the documents whose name are "YYYYY"
+  db.clothes.deleteMany({"name":"YYYYYY"});
+
+40)Delete the documents whose marks are "Levis"
+  db.clothes.remove({"mark":"Levis"});
+
+41)Delete all documents
+  db.clothes.deleteMany({}); OR db.clothes.remove({});
+
+Note: To insert document/s we have 3 methods insertOne(), insertMany(), insert()
+
+42)Insert a single document like name:TV, price:123, mark:Samsung
+==>1.Way:
+db.electronics.insertOne({"name":"TV", "price":123, "mark":"Samsung"});
+==>2.Way:
+db.electronics.insert({"name":"TV", "price":123, "mark":"Samsung"});
+
+43)Insert 3 documents like 
+name:TV, price:123, mark:Samsung
+name:Radio, price:32, mark:Panasonic
+name:ipod, price:150, mark:Apple
+==>1.Way
+db.electronics.insertMany([{"name":"TV", "price":123, "mark":"Samsung"}, 
+{"name":"Radio", "price":32, "mark":"Panasonic"}, 
+{"name":"ipod", "price":150, "mark":"Apple"}]);
+==>2.Way
+db.electronics.insert([{"name":"TV", "price":123, "mark":"Samsung"}, 
+{"name":"Radio", "price":32, "mark":"Panasonic"}, 
+{"name":"ipod", "price":150, "mark":"Apple"}]);
+
+44)Delete all records from electronics collection
+db.electronics.remove({});
+
+Note: Aggregations
+
+db.grades.insertMany([
+    { _id: 6305, name : "A. MacDyver", "assignment" : 5, "points" : 24 },
+    { _id: 6308, name : "B. Batlock", "assignment" : 3, "points" : 22 },
+    { _id: 6312, name : "M. Tagnum", "assignment" : 5, "points" : 30 },
+    { _id: 6319, name : "R. Stiles", "assignment" : 2, "points" : 12 },
+    { _id: 6322, name : "A. MacDyver", "assignment" : 2, "points" : 14 },
+    { _id: 6234, name : "R. Stiles", "assignment" : 1, "points" : 10 }
+    ]);
+
+45)Find the total points for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+46)Find the average points for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", average:{$avg:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+47)Find the minimum point for every assignment
+var pipeline = [{$match:{}}, {$group:{"_id":"$assignment", average:{$min:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+48)Find the average points of the records if the assignment is less than 4
+var pipeline = [{$match:{"assignment":{$lt:4}}}, {$group:{"_id":"$assignment", average:{$avg:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+49)Find the sum of points of the documents whose names are starting with "A"
+var pipeline = [{$match:{"name":{$regex:"^A"}}}, {$group:{"_id":null, total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+50)Find the sum of all points of the documents whose names are ending with "s"
+var pipeline = [{$match:{"name":{$regex:"s$"}}}, {$group:{"_id":null, total_points:{$sum:"$points"}}}];
+db.grades.aggregate(pipeline);
+
+Note: How to count documents
+51)Find the number of documents whose points are less than 19
+1.Way: find() + count()
+db.grades.find({"points":{$lt:19}}).count();
+
+2.Way: count() with the filter
+db.grades.count({"points":{$lt:19}});
+
+3.Way: aggregate() with $count
+var pipeline = [{$match:{"points":{$lt:19}}}, {$count:"Low points"}];
+db.grades.aggregate(pipeline);
+
+Note: How to add new fields into report
+
+db.accounting.insertMany(
+[{"name" : "dave", "expense":[-80, -40, -50, -120], "earn":[100, 150]},
+{"name" : "dave", "expense" : [-60, -30, -20], "earn" : [200, 50, 130] },
+{"name" : "ahn", "expense" : [-80, -40, -50], "earn" : [300, 450] },
+{"name" : "li", "expense" : [-80, -120], "earn" : [500, 50, 70, 10] },
+{"name" : "annT", "expense" : [-140, -50, -120], "earn" : [400] },
+{"name" : "li", "expense" : [-120], "earn" : [22, 375, 65] },
+{"name" : "ty", "expense" : [-180, -40, -70, -12], "earn" : [500, 650, 400]}]);
+
+52)Display the total expense, total earn, and net balance of every person in the existing documents.
+var pipeline = [{$addFields:{totalExpense:{$sum:"$expense"}, totalEarn:{$sum:"$earn"}}},
+{$addFields:{netBalance:{$add:["$totalExpense", "$totalEarn"]}}},
+{$sort:{"netBalance":-1}},
+{$project:{"_id":0, "expense":0, "earn":0}}];
+db.accounting.aggregate(pipeline).pretty();
+
+Note: How to create a copy of a collection in DB
+53)Create a copy of accounting collection in database with a new name (accountingCopy) 
+var pipeline = [{$merge:{into:"accountingCopy"}}];
+db.accounting.aggregate(pipeline).pretty();
+
+53)Create a copy of accounting collection with different indexes in database with a new name (accountingCopyIndexed) 
+var pipeline = [{$project:{_id:0}, {$merge:{into:"accountingCopyIndexed"}}}];
+db.accounting.aggregate(pipeline).pretty();
+
+Note: How to do multiple commands in a single method
+54) a)Insert {"author" : "mark", "score" : 55, "views" : 555 }; 
+    b)Update dave's score to 55
+    c)Replace {"author":"chris tien", "score":55} for {"author":"chris", "score":90, "views":100 }
+    d)Delete the document whose author is "mary" 
+
+db.stories.bulkWrite([
+                        {insertOne:{"document":{"author" : "mark", "score" : 55, "views" : 555 }}},
+                        {updateOne:{"filter":{author:"dave"}, "update":{$set:{score:55}}}},
+                        {replaceOne:{"filter":{author:"chris"}, "replacement":{"author" : "chris tien", "score" : 55}}},
+                        {deleteOne:{"filter":{author:"mary"}}}
+                    ]);
+
+Note: In bulkWrite(), you can use:
+                                    insertOne
+                                    updateOne
+                                    updateMany
+                                    deleteOne
+                                    deleteMany
+                                    replaceOne
+
+Note: How to fetch data from 2 different collections
+
+Note: Create an "articles" collection inside the "inventory" database, then insert documents
+db.articles.insertMany(
+[{"author" : "dave", "score" : 80, "views" : 100},
+{"author" : "leo", "score" : 85, "views" : 521 },
+{"author" : "tom", "score" : 60, "views" : 1000 },
+{"author" : "john", "score" : 55, "views" : 5000 },
+{"author" : "mary", "score" : 60, "views" : 50 },
+{"author" : "ali", "score" : 94, "views" : 999 }]);
+
+Note: Create an "stories" collection inside the "inventory" database, then insert documents
+db.stories.insertMany(
+[{"writer" : "dave", "score" : 75, "views" : 200 },
+{"writer" : "chris", "score" : 90, "views" : 100 },
+{"writer" : "ali", "score" : 35, "views" : 3000 },
+{"writer" : "mary", "score" : 80, "views" : 350 },
+{"writer" : "veli", "score" : 54, "views" : 333 },
+{"writer" : "ocean", "score" : 97, "views" : 2000 }]);
+
+55)Display all documents from both of the collections, sort the documents 
+according to the views (FULL JOIN)
+
+var pipeline = [{$unionWith:{coll:"stories"}}, {$project:{"_id":0}}, {$sort:{views:-1}}];
+db.articles.aggregate(pipeline);
+
+56)Display the sum of article views and story views for every author (FULL JOIN)
+var pipeline = [{$unionWith:{coll:"stories"}}, {$group:{"_id":"$author", totalViews:{$sum:"$views"}}}, {$sort:{totalViews:-1}}];
+db.articles.aggregate(pipeline);
+
+57)Display the sum of article views and story views for every author in articles document
+
+db.articles.aggregate([
+                        {$lookup:{
+                                    from:"stories",
+                                    localField:"author",
+                                    foreignField:"writer",
+                                    as:"doc"
+                                 }
+                        },
+                        {$unwind:{
+                                    path:"$doc", preserveNullAndEmptyArrays:true
+                                 }
+                        },
+                        {$project:{ 
+                                    value:{$add:["$views", {$ifNull:["$doc.views", 0]}]},
+                                    _id:0, author:1
+                                  }
+                        }
+                      ]);
+
+58)Display common authors from both of the documents with total scores and total views.
+
+db.articles.aggregate([
+
+                        {$lookup:{
+                            from:"stories",
+                            localField:"author",
+                            foreignField:"writer",
+                            as:"common"
+                        }},
+                        {
+                          $unwind:"$common"
+                        },
+                        {
+                          $project:{
+                            totalScores:{$add:["$score", "$common.score"]},
+                            totalViews:{$add:["$views", "$common.views"]},
+                            _id:0, 
+                            author:1
+                          }
+                        }
+                      ]).pretty();
+
+db.addresses.insertMany([
+    {"City" : "Miami","State" : "FL"},
+    {"City" : "Long Island", "State" : "NY"}
+]);
+
+db.users.insertOne(
+    {"name":"Ali Can", "age":25, "phone":"1234567890", 
+    address_id:["60bac988cee0919adba7182e", "60bac988cee0919adba7182f"]}
+);
+
+59)Find the address details of Ali Can
+db.addresses.find({"_id":{$in:[ObjectId("60bac988cee0919adba7182e"), ObjectId("60bac988cee0919adba7182f")]}}, {_id:0});
+
+
+db.persons.insertMany([
+    {
+        "_id": "Prsn101",
+        "firstName": "Joe",
+        "lastName": "Mongo",
+        "groups": [
+            "Grp11",
+            "Grp12"
+        ]
+    },
+    {
+        "_id": "Prsn102",
+        "firstName": "Sally",
+        "lastName": "Mongo",
+        "groups": [
+            "Grp11"
+        ]
+    }
+]);
+
+db.groups.insertMany([
+    {
+        "_id": "Grp11",
+        "groupName": "mongoDB User",
+        "persons": [
+            "Prsn101",
+            "Prsn102"
+        ]
+    },
+    {
+        "_id": "Grp12",
+        "groupName": "mongoDB Administrator",
+        "persons": [
+            "Prsn101"
+        ]
+    }
+]);
+
+60) Get all persons in the "mongoDB User" group
+db.persons.find({groups:"Grp11"});
+
+mongofiles -d products put /Users/apple/Downloads/MongoDBCompassInstallationVSCodeSetPDF.pdf;
