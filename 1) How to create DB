@@ -356,3 +356,153 @@ Note: In bulkWrite(), you can use:
                                     deleteOne
                                     deleteMany
                                     replaceOne
+db.articles.insertMany(
+[{"author" : "dave", "score" : 80, "views" : 100},
+{"author" : "leo", "score" : 85, "views" : 521 },
+{"author" : "tom", "score" : 60, "views" : 1000 },
+{"author" : "john", "score" : 55, "views" : 5000 },
+{"author" : "mary", "score" : 60, "views" : 50 },
+{"author" : "ali", "score" : 94, "views" : 999 }]);
+
+db.stories.insertMany(
+[{"writer" : "dave", "score" : 75, "views" : 200 },
+{"writer" : "chris", "score" : 90, "views" : 100 },
+{"writer" : "ali", "score" : 35, "views" : 3000 },
+{"writer" : "mary", "score" : 80, "views" : 350 },
+{"writer" : "veli", "score" : 54, "views" : 333 },
+{"writer" : "ocean", "score" : 97, "views" : 2000 }]);
+
+
+55) Display all documents from both of the collections, sort the documents according to the views(FULL JOIN)
+    var pipeline =[{$unionWith:{coll:"stories"}}, {$project:{"_id":0}}, {$sort:{views:-1}}];
+    db.articles.aggregate(pipeline);
+
+56) Display the sum of article views and story views for every author (FULL JOIN)
+    var pipeline = [{$unionWith:{coll:"articles"}}, {$group:{"_id":"$author", totalViews:    {$sum:"$views"}}}, {$sort:{totalViews:-1}}];
+    db.stories.aggregate(pipeline);
+
+57) Display the sum of article views and story views for every author in articles document
+     db.articles.aggregate([
+                        {$lookup:{
+                                    from:"stories",
+                                    localField:"author",
+                                    foreignField:"writer",
+                                    as:"doc"
+                                 }
+                        },
+                        {$unwind:{
+                                    path:"$doc", preserveNullAndEmptyArrays:true
+                                 }
+                        },
+                        {$project:{ 
+                                    value:{$add:["$views", {$ifNull:["$doc.views", 0]}]},
+                                    _id:0, author:1
+                                  }
+                        }
+                      ]);
+
+ 58) Display common authors from both of the documents with total scores and total views.
+     (Her iki belgedeki ortak yazarları toplam puanlar ve toplam görünümlerle görüntüleyin.)
+     
+
+ 59)
+    db.addresses.insertMany([
+    {"City" : "Miami","State" : "FL"},
+    {"City" : "Long Island", "State" : "NY"}
+     ]); 
+==================================================
+      db.addresses.insertMany([
+...     {"City" : "Miami","State" : "FL"},
+...     {"City" : "Long Island", "State" : "NY"}
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("60bacae5b53e0565c45455d7"),
+    '1': ObjectId("60bacae5b53e0565c45455d8")
+  }
+}
+  =============================================== 
+   db.users.insertOne(
+    {“name”:“Ali Can”, “age”:25, “phone”:“1234567890”, address_id:[“6000810eadbf827ba91e04fc”, “6000810eadbf827ba91e04fd”]}
+);
+
+60) Find the address details of Ali Can
+    db.addresses.find({"_id":{$in:[ObjectId("60bacae5b53e0565c45455d7"),ObjectId("60bacae5b53e0565c45455d8")]}});
+     
+     [
+  {
+    _id: ObjectId("60bacae5b53e0565c45455d7"),
+    City: 'Miami',
+    State: 'FL'
+  },
+  {
+    _id: ObjectId("60bacae5b53e0565c45455d8"),
+    City: 'Long Island',
+    State: 'NY'
+  }
+]
+
+========================================
+    61) ManyToMany
+
+   db.persons.insertMany([
+    {
+        "_id": "Prsn101",
+        "firstName": "Joe",
+        "lastName": "Mongo",
+        "groups": [
+            "Grp11",
+            "Grp12"
+        ]
+    },
+    {
+        "_id": "Prsn102",
+        "firstName": "Sally",
+        "lastName": "Mongo",
+        "groups": [
+            "Grp11"
+        ]
+    }
+]);
+
+
+     db.groups.insertMany([
+    {
+        "_id": "Grp11",
+        "groupName": "mongoDB User",
+        "persons": [
+            "Prsn101",
+            "Prsn102"
+        ]
+    },
+    {
+        "_id": "Grp12",
+        "groupName": "mongoDB Administrator",
+        "persons": [
+            "Prsn101"
+        ]
+    }
+]);
+
+   62) Get all persons in the “mongoDB User” group
+        db.persons.find({groups:"Grp11"},{"_id":0, "groups":0});
+
+   63) Get all persons in the “mongoDB Administrator” group
+        db.persons.find({groups:"Grp12"},{"_id":0, "groups":0});
+
+   64). mongofiles -d products put /Users/kemalgurler/Desktop /Appium.pdf;
+          mongofiles -d products put/Users/kemalgurler/Desktop/abc.pdf
+        
+    
+
+
+
+
+
+
+
+
+
+
+

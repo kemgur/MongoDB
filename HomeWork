@@ -29,3 +29,23 @@ db.articles.count({$and:[{score:{$lt:80}}, {score:{$gt:50}}]});
 //3.Way: Use aggregate()
 var pipeline = [{$match:{$and:[{score:{$lt:80}}, {score:{$gt:50}}]}}, {$count:"Middle scores"}];
 db.articles.aggregate(pipeline);
+
+New Questions:
+01) Find the number of documents whose score is less than 70 OR greater than 90
+    //1.Way: Use find() + count()
+    db.articles.find({$or:[{score:{$lt:70}}, {score:{$gt:90}}]}).count();//5
+​
+   //2.Way: Use count() with condition
+   db.articles.count({$or:[{score:{$lt:70}}, {score:{$gt:90}}]});//5
+
+02))Find the total number of views of documents whose score is less than 80 AND greater than 50
+    db.articles.find({$and:[{score:{$lt:80}},{score:{$gt:50}}]}).count();//3
+    db.articles.count({$and:[{score:{$lt:80}},{score:{$gt:50}}]});//3
+        
+
+
+
+01) Write a MongoDB query to display all the documents in the collection restaurants.
+    db.articles.find().pretty();
+
+02) 
